@@ -10,23 +10,20 @@ const easeOutQuad = (t, b, c, d) => {
 };
 
 export default class TouchTexture {
-    constructor(parent) {
-        this.size = 64;
+    constructor(size = 64, maxAge = 64) {
+        this.size = size;
+        this.maxAge = maxAge;
+
         this.width = window.innerWidth;
         this.height = window.innerHeight;
         this.width = this.height = this.size;
 
-        this.maxAge = 64;
         this.radius = 0.1 * this.size;
-        // this.radius = 0.15 * 1000;
 
         this.speed = 1 / this.maxAge;
-        // this.speed = 0.01;
 
         this.trail = [];
         this.last = null;
-
-        this.initTexture();
     }
 
     initTexture() {
@@ -38,19 +35,13 @@ export default class TouchTexture {
         this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
         this.texture = new THREE.Texture(this.canvas);
-        this.canvas.id = "touchTexture";
-        // this.canvas.style.width = this.canvas.style.height = `${
-        //   this.canvas.width
-        // }px`;
     }
-    update(delta) {
+
+    update() {
         this.clear();
         let speed = this.speed;
         this.trail.forEach((point, i) => {
             let f = point.force * speed * (1 - point.age / this.maxAge);
-            let x = point.x;
-            let y = point.y;
-
             point.x += point.vx * f;
             point.y += point.vy * f;
             point.age++;
@@ -59,22 +50,17 @@ export default class TouchTexture {
             }
         });
 
-        this.trail.forEach((point, i) => {
+        this.trail.forEach((point) => {
             this.drawPoint(point);
         });
-        // this.drawPoints();
-
-        // this.ctx.fillStyle = "rgba(255,0,0,0.5)";
-        // this.ctx.fillRect(0, 0, 200, 200);
-        // this.ctx.fillStyle = "rgba(0,255,0,0.5)";
-        // this.ctx.fillRect(50, 0, 200, 200);
-        // this.test();
         this.texture.needsUpdate = true;
     }
+
     clear() {
         this.ctx.fillStyle = "black";
         this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
     }
+
     addTouch(point) {
         let force = 0;
         let vx = 0;
@@ -90,15 +76,15 @@ export default class TouchTexture {
             vy = dy / d;
 
             force = Math.min(dd * 10000, 1);
-            // force = Math.sqrt(dd)* 50.;
-            // force = 1;
         }
+
         this.last = {
             x: point.x,
             y: point.y
         };
         this.trail.push({ x: point.x, y: point.y, age: 0, force, vx, vy });
     }
+
     drawPoint(point) {
         const ctx = this.ctx;
         const pos = {

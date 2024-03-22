@@ -11,7 +11,7 @@
     "dat.gui": "^0.7.9",
     "gsap": "^3.11.5",
     "parcel": "^2.9.3",
-    "postprocessing": "6.6.0",
-    "three": "0.107.0"
+    "postprocessing": "^6.35.2",
+    "three": "^0.162.0"
   }
 }
